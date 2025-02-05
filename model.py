@@ -300,10 +300,13 @@ class CMT(nn.Module):
 
         self.spatial_query_conv = nn.Conv2d(in_channels=32, out_channels=32, kernel_size=1, stride=1, padding=0)
         self.spatial_key_conv = nn.Conv2d(in_channels=32, out_channels=32, kernel_size=1, stride=1, padding=0)
-        spatial_3x3 = []
+        rgb_spatial_3x3 = []
+        ir_spatial_3x3 = []
         for _ in range(4): # patch_num * patch_num = 16
-            spatial_3x3.append(nn.Conv2d(in_channels=128, out_channels=32, kernel_size=3, dilation=2, padding=2))
-        self.spatial_3x3 = nn.Sequential(*spatial_3x3)
+            rgb_spatial_3x3.append(nn.Conv2d(in_channels=128, out_channels=32, kernel_size=3, stride=1, padding=1, padding_mode='reflect'))
+            ir_spatial_3x3.append(nn.Conv2d(in_channels=128, out_channels=32, kernel_size=3, stride=1, padding=1, padding_mode='reflect'))
+        self.rgb_spatial_3x3 = nn.Sequential(*rgb_spatial_3x3)
+        self.ir_spatial_3x3 = nn.Sequential(*ir_spatial_3x3)
         
         self.conv11 = nn.Conv2d(in_channels=64, out_channels=32, kernel_size=1, stride=1, padding=0)
     
@@ -380,12 +383,15 @@ class CMT(nn.Module):
                 irrelevance_map_weight_mul_reshaped = irrelevance_map_weight_mul.view(B, 1, H, W)
             
                 spa_patches_value = irrelevance_map_weight_mul_reshaped * before_query_patch_i 
-                # print(irrelevance_map_weight_mul_reshaped.size(), spa_patches_value.size())
                 
                 i_values.append(spa_patches_value) # query_1 * key_{1,2,3,4}를 다 구함
             
             i_values_tensor = torch.concat(i_values, dim=1) # [B, C * 4, H / 2, W / 2]
-            i_values_tensor_3x3 = self.spatial_3x3[query_i](i_values_tensor)
+            
+            if self.vis_flag:
+                i_values_tensor_3x3 = self.rgb_spatial_3x3[query_i](i_values_tensor)
+            else:
+                i_values_tensor_3x3 = self.ir_spatial_3x3[query_i](i_values_tensor)
         
             spatial_reconstructed.append(i_values_tensor_3x3)
         

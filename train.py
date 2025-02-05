@@ -71,13 +71,13 @@ def main():
     loss_fre = losses.frequency().cuda()
 
     prev_time = time.time()
-    out_path = '/media/hdd/sungmin/Research/CMTFusion/fusion_outputs/'
+    out_path = '/media/hdd/sungmin/Research/fusion_outputs/'
     if os.path.exists(out_path) is False:
         os.mkdir(out_path)
     
-    weight_path = '/media/hdd/sungmin/Research/CMTFusion/saved_models/CMTFusion_patches/'
-    if not os.path.exists(weight_path):
-        os.makedirs(weight_path)
+    # weight_path = '/media/hdd/sungmin/Research/saved_models/CMTFusion_patches/'
+    # if not os.path.exists(weight_path):
+    #     os.makedirs(weight_path)
     
     for epoch in range(args.epochs):
         ######### Train ###########
@@ -133,8 +133,7 @@ def main():
                     time_left,
                 )
             )
-
-        torch.save(fusion_model.state_dict(), "Research/CMTFusion/saved_models/%s/model_fusion%d.pth" % ("CMTFusion_NEW_SPATIAL_ALGORITHM", epoch))
+        torch.save(fusion_model.state_dict(), "Research/saved_models/%s/model_fusion%d.pth" % ("CMTFusion_NEW_SPATIAL_ALGORITHM_NO_DILATION_CONV", epoch))
 
 if __name__ == "__main__":
     main()
