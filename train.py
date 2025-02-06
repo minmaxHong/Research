@@ -1,19 +1,34 @@
 import argparse
-
-from torchvision import transforms
 import torch
 import torch.nn as nn
 import time
 import sys
 import datetime
 import torch.optim as optim
-from torch.utils.data import DataLoader
-from model import CMTFusion
 import utils
 import losses
 import torch.nn.functional as F
 import os
+import numpy as np
+import random
+
+from torchvision import transforms
+from torch.utils.data import DataLoader
+from CMTFusion_OwnTransformerAdd import CMTFusion
 from thop import profile
+
+
+def SEED_ALL(seed):
+    os.environ['PYTHONHASHSEED'] = str(seed)  # 파이썬 내부 해시 시드 고정
+    random.seed(seed)  # Python 기본 random 모듈 시드 고정
+    np.random.seed(seed)  # NumPy 난수 생성기 시드 고정
+    torch.manual_seed(seed)  # PyTorch의 CPU 난수 생성기 시드 고정
+    torch.cuda.manual_seed(seed)  # PyTorch의 GPU 난수 생성기 시드 고정
+    torch.cuda.manual_seed_all(seed)  # 다중 GPU 환경에서도 동일한 시드 적용
+    torch.backends.cudnn.benchmark = False  # 학습 과정의 결정론적 연산을 보장
+    torch.backends.cudnn.deterministic = True  # cudnn 연산을 결정론적으로 수행
+    torch.backends.cudnn.enabled = False  # cudnn을 비활성화하여 변동성을 줄임
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -37,7 +52,6 @@ def main():
     ######### device setting for gpu users #########
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("device: ", device)
-    torch.backends.cudnn.enabled = False
 
     ######### DataLoaders ###########
 
@@ -58,7 +72,7 @@ def main():
         print("\n\nLet's use", torch.cuda.device_count(), "GPUs!\n\n")
 
     # torch.cuda.set_device('cuda:0')
-    fusion_model = nn.DataParallel(CMTFusion(), device_ids=[0, 1])  # [0], device_ids
+    fusion_model = nn.DataParallel(CMTFusion(), device_ids=[0, 1, 2, 3])  # [0], device_ids
     # fusion_model = CMTFusion()
     fusion_model.cuda()
 
@@ -133,7 +147,10 @@ def main():
                     time_left,
                 )
             )
-        torch.save(fusion_model.state_dict(), "Research/saved_models/%s/model_fusion%d.pth" % ("CMTFusion_NEW_SPATIAL_ALGORITHM_NO_DILATION_CONV", epoch))
+        torch.save(fusion_model.state_dict(), "Research/saved_models/%s/model_fusion%d.pth" % ("CMTFusion_NEW_SPATIAL_ALGORITHM_ONLY_SAME_PATCHES", epoch))
 
 if __name__ == "__main__":
+    SEED = 0
+    SEED_ALL(SEED)
+    
     main()

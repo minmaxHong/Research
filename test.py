@@ -11,7 +11,7 @@ def run():
     parser.add_argument('--out_path', type=str, default='./fusion_outputs/', help='path of fused image')
     parser.add_argument('--test_images', type=str, default='/media/hdd/sungmin/Dataset/test_TNO', help='path of source image')
     parser.add_argument('--dataset_name', type=str, default='basic', help='dataset name')
-    parser.add_argument('--weights', type=str, default='/media/hdd/sungmin/Research/saved_models/CMTFusion_NEW_SPATIAL_ALGORITHM/model_fusion0.pth', help='dataset name')
+    parser.add_argument('--weights', type=str, default='/media/hdd/sungmin/Research/saved_models/CMTFusion_NEW_SPATIAL_ALGORITHM_ONLY_SAME_PATCHES/model_fusion12.pth', help='dataset name')
     args = parser.parse_args()
 
     if os.path.exists(args.out_path) is False:
@@ -44,7 +44,7 @@ def run():
                 # # save images
                 save_image(fused, "Research/fusion_outputs/%d.png" % index, normalize=True)
                 
-                print(f"{i}번째 processing completed!!")
+                print(f"{i+1}번째 processing completed!!")
 
     print('Done......')
 
