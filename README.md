@@ -1,10 +1,9 @@
 # CMTFusion
-
-### Seonghyun Park, An Gia Vien, and Chul Lee
-Official pytorch implementation for **"Cross-Modal Transformers for Infrared and Visible Image Fusion"**
+This is a modified model based on the existing CMTFusion.<br>
+Please refer to it.
 
 <p float="left">
-  &emsp;&emsp; <img src="figs/overview.PNG" width="800" />
+  &emsp;&emsp; <img src="figs/overview.jpg" width="800" />
 </p>
 
 ## Preparation
@@ -14,11 +13,9 @@ The ZIP file contains three test datasets:
 - TNO dataset: 20 image pairs
 - RoadScene dataset: 221 image pairs
 - M3FD dataset: 300 image pairs
-### Pretrained weights: [Download from GoogleDrive](https://drive.google.com/file/d/1-yfpwxfntbwmsY8mTeYAqacowE_lL7h4/view)
-The ZIP file contains pretrained weight file
 
 ## Citation
-If you find this work useful for your research, please consider citing our paper:
+If you find CMTFusion useful for your research, please consider citing paper:
 ```
 @article{park2023_CMTFusion,
   title={Cross-Modal Transformers for Infrared and Visible Image Fusion},
